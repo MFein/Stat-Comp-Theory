@@ -1,0 +1,118 @@
+---
+title: "HW3"
+author: "Matthew Fein"
+date: "November 13, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# R Exploratory Analysis
+
+1) Generally speaking all data available at a certain geographic level in the decennial census is also available in the American Community Survey (ACS), however, the ACS is available at more levels.  
+  For example census and ACS information is available at the state, county, county subdivision, census tract and census block group levels while only the ACS allows for data to be pbtained at the national level, census region level aand census division level.  The ACS also gives detailed at a finer level such as "urban areas" and school districts.
+  
+2) For the purposes of the US census and ACS race is defined as "a person's self-identification with one or more social groups." These are white, black/African American, Asian, and certain subgroups of indegenous peoples.  Variables B2001_001-B2001_007 list all of the individual options for race that one may chose.
+  Ethnicity on the other hand is used only to determine whether or not an individual is of Hispanic origin or not. Variables B3001_001 & B3001_002 represent an individual is of Hispanic ethnicity or noot, respectively.  The remainder of codes under B3001_* allow an individual to specify the exact country of origin within the hispanic ethnicity.
+  
+3) The ACS collects race and ethnicity data in a similar manner to the decennial census, however, a much smaller sample of the overall population (1 in 6 households) are asked to complete the ACS compared to the census.  In general it is OK to compare basic characteristics (sex, age, race, Hispanic origin, and homeowner status); other questions were not asked on the 2010 Census which were asked on the ACS.
+
+4) The ACS does provide a margin for error for their estimates- these should be used to assess the validity of analyses run on ACS data.  The higher the MOE the less reliable one can consider the results.
+
+5) Assigning race and ethnicity data to a dataframe for NY, NJ & CT at the county level:
+
+```{r echo = FALSE}
+library(tidyverse)
+library(tidycensus)
+library(sf)
+library(ggplot2)
+library(leaflet)
+
+my_states <- c("CT", "NJ", "NY")
+
+my_vars <- c(
+  total_race = "B02001_001",
+  white_alone = "B02001_002",
+  black_alone = "B02001_003",
+  americanind_alone = "B02001_004",
+  asian_alone = "B02001_005",
+  hawaiian_alone = "B02001_006",
+  total_ethnicity = "B03001_001",
+  nothispanic = "B03001_002",
+  hispanic = "B03001_003"
+  )
+
+multi_state_df <- get_acs(
+  geography = "county",
+  variables = my_vars,
+  state = my_states,
+  year = 2016,
+  survey = "acs5",
+  geometry = TRUE,
+  cache = TRUE
+  ) 
+  print(multi_state_df)
+```
+
+
+# Geo- spatial analysis and visualization
+
+```{r}
+multi_spread <- st_as_sf(multi_state_df) %>%
+  spread(key = "variable", value = "estimate")
+
+prune_multi_spread <- multi_spread%>%
+  group_by(NAME) %>%
+  summarise_all(funs(first(.[!is.na(.)])))
+prune_multi_spread <- prune_multi_spread%>%
+  mutate(NAME, whiteprop = white_alone/total_race, blackprop = black_alone/total_race, asianprop = asian_alone/total_race, nativeprop =  americanind_alone/total_race, hawaiianprop = hawaiian_alone/total_race, sqwhite = whiteprop**2, sqblack = blackprop**2, asiansq = asianprop**2, amerindsq= americanind_alone**2, hawsq= hawaiianprop**2, PRacial= sum(sqwhite,sqblack, asiansq, amerindsq, hawsq), PEthnic = hispanic**2 + nothispanic**2, PSame = PRacial*PEthnic, Diversity_Index = (1-PSame)*100)
+```
+
+6) Plot of Diversity Index
+
+```{r}
+
+
+ggplot(data=prune_multi_spread, aes(x=prune_multi_spread$Diversity_Index)) + 
+  geom_histogram(col="green", 
+                 fill="green", 
+                 alpha = .2) + 
+  labs(title="Histogram for Diversity Index", x="Diversity Index", y="Count") 
+
+
+```
+
+The histogram displays a negative skewness looking at the diversity index.
+
+7)
+```{r}
+sortedDI <- prune_multi_spread[order(prune_multi_spread$Diversity_Index),]
+top10<- sortedDI[1:10,]
+
+ggplot(data=top10, aes(x=NAME, y=Diversity_Index, group=1)) +
+  geom_line()+
+  geom_point()
+```
+
+8)
+```{r}
+pal <- colorQuantile(palette = "viridis", domain = prune_multi_spread$Diversity_Index, n = 10)
+
+prune_multi_spread %>%
+    st_transform(crs = "+init=epsg:4326") %>%
+    leaflet(width = "100%") %>%
+    addProviderTiles(provider = "CartoDB.Positron") %>%
+    addPolygons(popup = ~ str_extract(NAME, "^([^,]*)"),
+                stroke = FALSE,
+                smoothFactor = 0,
+                fillOpacity = 0.7,
+                color = ~ pal(Diversity_Index)) %>%
+    addLegend("bottomright", 
+              pal = pal, 
+              values = ~ Diversity_Index,
+              title = "Diversity Index",
+              opacity = 1)
+```
+The relationship between geography and diversity index seems to be that the counties most proximal to NYC are more diverse than rural areas like southern New Jersey and upstyate New York.

@@ -1,0 +1,147 @@
+---
+title: 'Homework #2: SDGB-7844'
+author: "Matthew Fein"
+fordham_id_number: "A16797353"
+fordham_email: "mfein@fordham.edu"
+date: "10/31/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Choose 5 problems below to complete.  Each question below comes from our text, **Introduction to Scientific Programming and Simulation with R**.  Please comment your code where appropriate.
+
+### Chapter 3 - Exercise 1
+
+```{r}
+# input
+x.values <- seq(-2, 2, by = 0.1)
+# for each x calculate y
+n <- length(x.values)
+
+y.values <- rep(0, n)
+for (i in 1:n) {
+x <- x.values[i]
+
+if (x < 0) {
+y<- -x**3
+} else if (x > 0 & x <1) {
+y <- x**2
+} else {
+  y <- sqrt(x)
+}
+
+y.values[i] <- y
+}
+# output
+plot(x.values, y.values, type = "l")
+
+```
+
+### Chapter 3 - Exercise 2
+
+```{r}
+#x <- readline(prompt="Enter a value for x: ")
+#n <- readline(prompt="Enter a value for n: ")
+x<- 3
+n<- 5
+
+h<-as.integer(c(1, rep(x, times = n)))
+
+for(item in 2:length(h)){
+  
+  # print value of item
+  h[item] <-  h[item]**(item-1)
+  print( h[item])
+  
+ # l
+ print( h )
+
+}
+```
+print(sum(h))
+
+### Chapter 3 - Exercise 4
+
+
+```{r}
+#x <- readline(prompt="Enter a value for x: ")
+#n <- readline(prompt="Enter a value for n: ")
+x<- 3
+n <- 5
+h<-as.integer(c(1, rep(x, times = n)))
+
+i <- 2
+while(i < length(h)){
+  
+  # print value of item
+  h[i] <-  h[i]**(i-1)
+  print( h[i])
+  
+ # l
+ print( h )
+ i<- i+1
+
+}
+```
+print(sum(h))
+
+```
+
+### Chapter 3 - Exercise 6
+
+
+```{r}
+ 
+
+```
+
+### Chapter 3 - Exercise 7
+
+
+```{r}
+x <- seq(0:12)
+ 
+sum3rd <- sum((x[i:length(x)%%3==0]))
+```
+
+
+### Chapter 3 - Exercise 12
+
+```{r}
+x <- sum(ceiling(6*runif(2)))
+print(sprintf("Roll is %s.", x))
+
+if (x==7|x==11) {
+  print("You win!")
+
+} else if (x == 2|x == 3|x == 12) {
+  print("You lose!")
+  
+} else {
+
+  print(sprintf("The point is on '%s', shoot again.",x))  
+  
+  x2<-0
+  while(x2 != x){
+  x2 <- sum(ceiling(6*runif(2)))
+  if (x2==7) {
+    print("Craps you lose!")
+    break
+  } else{
+    print(sprintf("%s, Shoot again.", x2))
+    x2 <- sum(ceiling(6*runif(2)))
+    
+  }
+  
+  }
+  
+  while(x2 == x){
+    print(sprintf("%s, You win!", x2))
+    break
+
+  }
+}
+```

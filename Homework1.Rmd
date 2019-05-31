@@ -1,0 +1,152 @@
+---
+title: 'Homework #1: SDGB-7844'
+author: "Matthew Fein"
+fordham_id_number: "A16797353"
+fordham_email: "mfein@fordham.edu"
+date: "10/19/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Each of the exercises below are from our textbook - _Introduction to Scientific Programming and Simulaiton Using R._ The exercises begin on p. 26.  Make sure to comment your code.  Points will be deducted for uncommented code!  
+
+You should create new code blocks if necessary to answer the question.  You should also use plaintext to provide an explanation for your code if the question calls for one.
+
+### Chapter 2 - Exercise 1a. 
+
+```{r}z <- x^(a^b)          #x raiesed to the ath which has been raised to the bth
+
+
+```
+
+### Chapter 2 - Exercise 1b. 
+
+```{r}z <- (x^a)^b            #x raised to the ath then raised to the bth
+
+
+```
+
+### Chapter 2 - Exercise 1c. 
+
+```{r}z <- (3*x^3)+(2*x^2)+(6^x)+1
+ 
+
+```
+
+### Chapter 2 - Exercise 1d. 
+
+```{r}
+x <- 3.08                             #set number for division
+z <- floor((x %% 1)*100)              # extract second digit after decimal
+```
+
+### Chapter 2 - Exercise 1e. 
+
+```{r}
+z <- z + 1              #increment z by 1
+
+```
+
+
+### Chapter 2 - Exercise 2a.
+
+```{r}
+x <- c(1:8,7:1)   #created vector ascending from 1-8 and descending from 7-1
+
+```
+
+### Chapter 2 - Exercise 2b.
+
+```{r}
+y <-rep(1:5, 1:5)     # create vector of 1-5 with 1-5 repeated 1-5 times each
+
+```
+
+
+### Chapter 2 - Exercise 2c. 
+
+```{r}
+A <- matrix(c(0,1,1,1,0,1,1,1,0), nrow = 3, ncol = 3)   #create matrix with                                                               #specific values
+
+```
+
+### Chapter 2 - Exercise 2d.
+
+```{r}
+B <- matrix(c(0,0,7,2,5,0,3,0,0), nrow = 3, ncol = 3)   #create matrix with                                                               #specific values
+
+```
+
+### Chapter 2 - Exercise 4
+
+```{r}
+x <- c(1:100)           #creates vector of alldigits from 1-100
+y <- x[x%%2 != 0 & x%%3 !=0 & x%%7 != 0]    #creates vector of elements from x of 
+                                            #which are not divisible by 2,3,7
+```
+
+
+### Chapter 2 - Exercise 5a. 
+
+```{r}
+queue <- c("Steve", "Russell", "Alison", "Liam") # create starting order
+queue <- c(queue, "Barry")    # adds Barry to the last position of queue
+```
+
+### Chapter 2 - Exercise 5b. 
+
+```{r}
+queue <- queue[-1]    #removes the first person in line
+```
+
+### Chapter 2 - Exercise 5c.
+
+```{r}
+queue <- c("Pam",queue)   #adds Pam to the front of the line
+```
+
+### Chapter 2 - Exercise 5d. 
+
+```{r}
+queue <- queue[-5]        #removes Barry from last position
+```
+
+### Chapter 2 - Exercise 5e. 
+
+```{r}
+queue <- queue[which(queue != "Alison")] # return names which are not Alison
+
+```
+
+### Chapter 2 - Exercise 6
+
+```{r}
+rm(list=ls())                  #clear workspace
+x <- 1                          # create X
+print(x)                        # show X
+x[3] <- 3                       #place 3 in the third position of x
+print(x)                        # show X, NA in 2nd position
+y <- c()                        #creates empty vector y
+print(y)                        # shows y
+y[2] <- 2                       # inserts 2 into the second position
+print(y)                        # shows y
+y[3] <- y[1]                    # inserts NA in the third position
+print(y)                        # shows y
+y[2] <- y[4]                    # inserts NA into the second position
+print(y)                        # shows y
+#z[1] <- 0                       # fails to run
+```
+
+### Chapter 2 - Exercise 7
+
+```{r}
+ID <- diag(10)                   # create identity matrix
+ID<- ifelse(row(ID)==col(ID),ID,5)   #replace non diagonal elements with 5's
+
+ID <- diag(10) 
+ID[upper.tri(ID) | lower.tri(ID)] = 5 #alternate way of replacing 0s with 5s
+```
+
